@@ -1,6 +1,7 @@
 import { M } from '../../styles/theme';
+import { Listing } from '../../types';
 
-export const MarketSignals = ({ l, inv }) => {
+export const MarketSignals = ({ l, inv }: { l: Listing, inv?: boolean }) => {
   const c = inv ? "rgba(255,255,255,.7)" : "#777";
   const hot = inv ? "#ff7a5c" : "#c23616";
   return (

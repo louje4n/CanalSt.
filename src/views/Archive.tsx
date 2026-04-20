@@ -2,8 +2,13 @@ import { D, B, M } from '../styles/theme';
 import { AuthBadge } from '../components/ui/AuthBadge';
 import { MarketSignals } from '../components/ui/MarketSignals';
 import { StudioPlate } from '../components/branding/StudioPlate';
+import { useStore } from '../store/useStore';
+import { Listing } from '../types';
 
-export const Archive = ({ openPdv, HERO, ROTATION, GRID }) => (
+export const Archive = ({ HERO, ROTATION, GRID }: { HERO: Listing, ROTATION: Listing[], GRID: Listing[] }) => {
+  const setActiveProduct = useStore(state => state.setActiveProduct);
+
+  return (
   <div>
     <div style={{ padding:"20px 20px 13px", position:"sticky", top:0, background:"#fff", zIndex:10, borderBottom:"1px solid #f0f0f0" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
@@ -18,7 +23,7 @@ export const Archive = ({ openPdv, HERO, ROTATION, GRID }) => (
       </div>
     </div>
 
-    <div className="fu" onClick={() => openPdv(HERO)} style={{ cursor:"pointer", borderBottom:"1px solid #f0f0f0" }}>
+    <div className="fu" onClick={() => setActiveProduct(HERO)} style={{ cursor:"pointer", borderBottom:"1px solid #f0f0f0" }}>
       <div style={{ padding:"26px 20px 10px" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:6 }}>
           <span style={{ ...M, fontSize:9, color:"#111", letterSpacing:".18em", fontWeight:700 }}>THIS WEEK IN THE ARCHIVE</span>
@@ -50,7 +55,7 @@ export const Archive = ({ openPdv, HERO, ROTATION, GRID }) => (
       <span style={{ ...M, fontSize:9, color:"#bbb", letterSpacing:".08em" }}>02</span>
     </div>
     {ROTATION.map((l, i) => (
-      <div key={l.id} onClick={() => openPdv(l)} className="fu" style={{ borderBottom:"1px solid #f0f0f0", cursor:"pointer", animationDelay:`${i*.065}s` }}>
+      <div key={l.id} onClick={() => setActiveProduct(l)} className="fu" style={{ borderBottom:"1px solid #f0f0f0", cursor:"pointer", animationDelay:`${i*.065}s` }}>
         <div style={{ height:260, background:l.bg, position:"relative", overflow:"hidden" }}>
           <StudioPlate l={l}/>
           <div style={{ position:"absolute", top:14, left:14 }}>
@@ -87,7 +92,7 @@ export const Archive = ({ openPdv, HERO, ROTATION, GRID }) => (
     </div>
     <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1, background:"#f0f0f0", borderTop:"1px solid #f0f0f0", borderBottom:"1px solid #f0f0f0" }}>
       {GRID.map((l, i) => (
-        <div key={`g${i}`} onClick={() => openPdv(l)} className="fu" style={{ background:"#fff", cursor:"pointer", animationDelay:`${i*.05}s` }}>
+        <div key={`g${i}`} onClick={() => setActiveProduct(l)} className="fu" style={{ background:"#fff", cursor:"pointer", animationDelay:`${i*.05}s` }}>
           <div style={{ height:172, background:l.bg, position:"relative", overflow:"hidden" }}>
             <StudioPlate l={l}/>
             {l.hot && (
@@ -113,4 +118,5 @@ export const Archive = ({ openPdv, HERO, ROTATION, GRID }) => (
       <span style={{ ...M, fontSize:8, color:"#ccc", letterSpacing:".15em" }}>── END OF ISSUE 047 ──</span>
     </div>
   </div>
-);
+  );
+};

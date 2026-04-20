@@ -2,13 +2,19 @@ import { D, B, M, sigColor } from '../styles/theme';
 import { AuthBadge } from '../components/ui/AuthBadge';
 import { MarketSignals } from '../components/ui/MarketSignals';
 import { StudioPlate } from '../components/branding/StudioPlate';
+import { useStore } from '../store/useStore';
+import { Listing } from '../types';
 
-export const PDV = ({ l, pdvPhoto, setPdvPhoto, setPdv, LISTINGS, openPdv }) => {
+export const PDV = ({ pdvPhoto, setPdvPhoto, LISTINGS }: { pdvPhoto: number, setPdvPhoto: (n: number) => void, LISTINGS: Listing[] }) => {
+  const { activeProduct: l, setActiveProduct } = useStore();
+  
+  if (!l) return null;
+
   const similar = LISTINGS.filter(x => x.id !== l.id).slice(0, 4);
   return (
     <div style={{ background:"#fff" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 20px", position:"sticky", top:0, background:l.bg, zIndex:10 }}>
-        <button onClick={() => setPdv(null)} style={{ background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center", gap:8, ...B, fontSize:12, fontWeight:500, letterSpacing:".08em", color:l.txt, padding:0 }}>
+        <button onClick={() => setActiveProduct(null)} style={{ background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center", gap:8, ...B, fontSize:12, fontWeight:500, letterSpacing:".08em", color:l.txt, padding:0 }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m15 18-6-6 6-6"/></svg>
           ARCHIVE
         </button>
@@ -110,7 +116,7 @@ export const PDV = ({ l, pdvPhoto, setPdvPhoto, setPdv, LISTINGS, openPdv }) => 
           </div>
           <div className="hscroll" style={{ padding:"0 20px 8px" }}>
             {similar.map(s => (
-              <div key={s.id} onClick={() => openPdv(s)} style={{ flexShrink:0, width:134, cursor:"pointer" }}>
+              <div key={s.id} onClick={() => setActiveProduct(s)} style={{ flexShrink:0, width:134, cursor:"pointer" }}>
                 <div style={{ height:160, background:s.bg, position:"relative", overflow:"hidden", marginBottom:8 }}>
                   <StudioPlate l={s}/>
                 </div>

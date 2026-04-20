@@ -1,5 +1,7 @@
-export const Silhouette = ({ type, color }) => {
-  const s = { stroke:color, strokeWidth:1, fill:"none", strokeLinejoin:"round", strokeLinecap:"round", opacity:.5 };
+import { Listing } from '../../types';
+
+export const Silhouette = ({ type, color }: { type: string, color: string }) => {
+  const s = { stroke:color, strokeWidth:1, fill:"none", strokeLinejoin:"round" as const, strokeLinecap:"round" as const, opacity:.5 };
   if (type === "jacket") return (
     <svg viewBox="0 0 100 130" style={{ width:"100%", height:"100%" }}>
       <path {...s} d="M35 18 L50 12 L65 18 L80 32 L78 48 L72 50 L72 112 L28 112 L28 50 L22 48 L20 32 Z"/>
@@ -42,7 +44,7 @@ export const Silhouette = ({ type, color }) => {
 };
 
 // STUDIO PLATE — reads like an editorial lay-flat, not decorative cover art
-export const StudioPlate = ({ l, size="full" }) => (
+export const StudioPlate = ({ l, size="full" }: { l: Listing, size?: "full"|"hero" }) => (
   <div style={{ position:"absolute", inset:0, overflow:"hidden" }}>
     <div style={{ position:"absolute", inset:0, background: `radial-gradient(ellipse 110% 70% at 50% 35%, ${l.accent} 0%, ${l.bg} 75%)` }}/>
     <div style={{ position:"absolute", left:0, right:0, bottom:0, height:"32%", background:`linear-gradient(to top, ${l.bg} 0%, ${l.bg}00 100%)` }}/>

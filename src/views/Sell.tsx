@@ -2,7 +2,7 @@ import { D, B, M } from '../styles/theme';
 
 const RESULT = [["Brand Detected","Helmut Lang"],["Category","Trousers / Cargo"],["Condition","Very Good"],["Suggested Price","$380 – $520"],["Aesthetic Signature","Deconstruct"],["Est. Market Demand","Medium-High"],["Confidence","94.2%"]];
 
-export const Sell = ({ sellStep, setSellStep }) => {
+export const Sell = ({ sellStep, setSellStep }: { sellStep: number, setSellStep: (n: number | ((prev: number) => number)) => void }) => {
   const analyze = () => { setSellStep(1); setTimeout(() => setSellStep(2), 3400); };
   return (
     <div style={{ padding:"22px 20px 100px" }}>
