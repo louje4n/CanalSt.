@@ -1,14 +1,13 @@
 import { D, B, M } from '../styles/theme';
 import { StudioPlate } from '../components/branding/StudioPlate';
 import { useStore } from '../store/useStore';
-import { LISTINGS } from '../data/listings';
 
 const LINS = ["Technical","Archival","Deconstruct","Minimalist","Avant-Garde"];
 const ERAS = ["90s","00s","10s","20s"];
 const SIZES = ["S","M","L","32","46","3"];
 
 export const Curator = () => {
-  const { searchQuery, setSearchQuery, activeFilters, setActiveFilters, setActiveProduct } = useStore();
+  const { searchQuery, setSearchQuery, activeFilters, setActiveFilters, setActiveProduct, listings } = useStore();
   const { lineage: lin, era, size: sizeF, maxPrice: priceMax } = activeFilters;
 
   const toggle = (category: 'lineage' | 'era' | 'size', v: string) => {
@@ -17,7 +16,7 @@ export const Curator = () => {
     setActiveFilters({ ...activeFilters, [category]: newList });
   };
 
-  const filtered = LISTINGS.filter(l =>
+  const filtered = listings.filter(l =>
     (!searchQuery || [l.brand, l.item].some(s => s.toLowerCase().includes(searchQuery.toLowerCase()))) &&
     (!lin.length || lin.includes(l.sig)) &&
     (!era.length || era.includes(l.era)) &&

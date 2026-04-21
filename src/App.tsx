@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { M } from './styles/theme';
-import { LISTINGS, HERO, ROTATION, GRID } from './data/listings';
 
 import { Archive } from './views/Archive';
 import { Curator } from './views/Curator';
@@ -11,10 +10,25 @@ import { useStore } from './store/useStore';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 
 export default function App() {
-  const { activeProduct, setActiveProduct, showIndexInfo, setShowIndexInfo } = useStore();
+  const { activeProduct, setActiveProduct, showIndexInfo, setShowIndexInfo, fetchListings, isLoading } = useStore();
   const [pdvPhoto, setPdvPhoto] = useState(0);
   const [sellStep, setSellStep] = useState(0);
   const location = useLocation();
+
+  useEffect(() => {
+    fetchListings();
+  }, [fetchListings]);
+
+  if (isLoading) {
+    return (
+      <div style={{ minHeight:"100vh", background:"#0a0a0a", display:"flex", alignItems:"center", justifyContent:"center" }}>
+        <div style={{ ...M, fontSize:11, color:"#fff", letterSpacing:".1em", animation:"pulse 1.5s infinite" }}>
+          CONNECTING TO ARCHIVE...
+        </div>
+        <style>{`@keyframes pulse { 0% {opacity:1} 50% {opacity:.3} 100% {opacity:1} }`}</style>
+      </div>
+    );
+  }
 
   const NAV = [
     { key:"archive", path:"/", label:"ARCHIVE", svg:<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> },
@@ -38,7 +52,7 @@ export default function App() {
         
         <div className="scroll" style={{ height:"calc(852px - 50px - 84px)", background:"#fff" }}>
           <Routes>
-            <Route path="/" element={<Archive HERO={HERO} ROTATION={ROTATION} GRID={GRID} />} />
+            <Route path="/" element={<Archive />} />
             <Route path="/curator" element={<Curator />} />
             <Route path="/sell" element={<Sell sellStep={sellStep} setSellStep={setSellStep} />} />
             <Route path="/profile" element={<Profile />} />
@@ -47,7 +61,7 @@ export default function App() {
 
         {activeProduct && (
           <div className="scroll" style={{ position:"absolute", top:50, left:0, right:0, bottom:84, background:"#fff", zIndex:50 }}>
-            <PDV pdvPhoto={pdvPhoto} setPdvPhoto={setPdvPhoto} LISTINGS={LISTINGS} />
+            <PDV pdvPhoto={pdvPhoto} setPdvPhoto={setPdvPhoto} />
           </div>
         )}
 

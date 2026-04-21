@@ -3,10 +3,21 @@ import { DupeBadge } from '../components/ui/DupeBadge';
 import { MarketSignals } from '../components/ui/MarketSignals';
 import { StudioPlate } from '../components/branding/StudioPlate';
 import { useStore } from '../store/useStore';
-import { Listing } from '../types';
 
-export const Archive = ({ HERO, ROTATION, GRID }: { HERO: Listing, ROTATION: Listing[], GRID: Listing[] }) => {
-  const setActiveProduct = useStore(state => state.setActiveProduct);
+
+export const Archive = () => {
+  const { setActiveProduct, listings } = useStore();
+  const HERO = listings[0] || null;
+  const ROTATION = listings.slice(1, 3);
+  const GRID = listings.slice(3);
+
+  if (!HERO) {
+    return (
+      <div style={{ padding: 40, ...M, fontSize: 10, color: "#aaa", textAlign: "center" }}>
+        ARCHIVE IS CURRENTLY EMPTY
+      </div>
+    );
+  }
 
   return (
   <div>

@@ -3,14 +3,14 @@ import { DupeBadge } from '../components/ui/DupeBadge';
 import { MarketSignals } from '../components/ui/MarketSignals';
 import { StudioPlate } from '../components/branding/StudioPlate';
 import { useStore } from '../store/useStore';
-import { Listing } from '../types';
 
-export const PDV = ({ pdvPhoto, setPdvPhoto, LISTINGS }: { pdvPhoto: number, setPdvPhoto: (n: number) => void, LISTINGS: Listing[] }) => {
-  const { activeProduct: l, setActiveProduct } = useStore();
+
+export const PDV = ({ pdvPhoto, setPdvPhoto }: { pdvPhoto: number, setPdvPhoto: (n: number) => void }) => {
+  const { activeProduct: l, setActiveProduct, listings } = useStore();
   
   if (!l) return null;
 
-  const similar = LISTINGS.filter(x => x.id !== l.id).slice(0, 4);
+  const similar = listings.filter(x => x.id !== l.id).slice(0, 4);
   return (
     <div style={{ background:"#fff" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 20px", position:"sticky", top:0, background:l.bg, zIndex:10 }}>
