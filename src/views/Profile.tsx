@@ -1,5 +1,5 @@
 import { D, B, M } from '../styles/theme';
-import { AuthBadge } from '../components/ui/AuthBadge';
+import { DupeBadge } from '../components/ui/DupeBadge';
 
 export const Profile = () => (
   <div style={{ padding:"22px 20px 100px" }}>
@@ -16,7 +16,7 @@ export const Profile = () => (
           <span style={{ color:"#e0e0e0" }}>·</span>
           <span style={{ ...M, fontSize:9, color:"#555" }}>23 SALES</span>
           <span style={{ color:"#e0e0e0" }}>·</span>
-          <AuthBadge small/>
+          <DupeBadge matchScore={98} small/>
         </div>
       </div>
     </div>

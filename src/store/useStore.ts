@@ -15,6 +15,8 @@ interface StoreState {
   setActiveFilters: (filters: ActiveFilters | ((prev: ActiveFilters) => ActiveFilters)) => void;
   activeProduct: Listing | null;
   setActiveProduct: (product: Listing | null) => void;
+  showIndexInfo: boolean;
+  setShowIndexInfo: (v: boolean) => void;
 }
 
 export const useStore = create<StoreState>((set) => ({
@@ -26,4 +28,6 @@ export const useStore = create<StoreState>((set) => ({
   })),
   activeProduct: null,
   setActiveProduct: (product) => set({ activeProduct: product }),
+  showIndexInfo: false,
+  setShowIndexInfo: (v) => set({ showIndexInfo: v }),
 }));

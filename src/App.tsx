@@ -11,7 +11,7 @@ import { useStore } from './store/useStore';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 
 export default function App() {
-  const { activeProduct, setActiveProduct } = useStore();
+  const { activeProduct, setActiveProduct, showIndexInfo, setShowIndexInfo } = useStore();
   const [pdvPhoto, setPdvPhoto] = useState(0);
   const [sellStep, setSellStep] = useState(0);
   const location = useLocation();
@@ -64,6 +64,35 @@ export default function App() {
             );
           })}
         </div>
+
+        {showIndexInfo && (
+          <div style={{ position:"absolute", top:0, left:0, right:0, bottom:0, background:"rgba(0,0,0,.85)", zIndex:999, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }} onClick={() => setShowIndexInfo(false)}>
+            <div style={{ background:"#111", padding:"30px 24px", width:"100%", border:"1px solid #333", position:"relative", borderRadius:12 }} onClick={e => e.stopPropagation()}>
+              <button onClick={() => setShowIndexInfo(false)} style={{ position:"absolute", top:14, right:14, background:"none", border:"none", color:"#fff", cursor:"pointer" }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+              <div style={{ ...import('./styles/theme').then(m => m.D).catch(()=>({})), fontSize:22, fontFamily:"Helvetica", fontWeight:700, color:"#fff", letterSpacing:".03em", marginBottom:12 }}>THE VISUAL PROXIMITY INDEX</div>
+              <div style={{ ...import('./styles/theme').then(m => m.B).catch(()=>({})), fontSize:13, fontFamily:"Helvetica", color:"#aaa", lineHeight:1.5, marginBottom:24 }}>Our proprietary scoring model discreetly evaluates structural fidelity, material weight, and aesthetic alignment to the original reference artifact.</div>
+              
+              <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+                <div>
+                  <div style={{ fontSize:10, fontFamily:"monospace", color:"#fff", fontWeight:700, letterSpacing:".1em", marginBottom:4 }}>TIER-1 (98-100%)</div>
+                  <div style={{ fontSize:12, fontFamily:"Helvetica", color:"#bbb", lineHeight:1.4 }}>Uncompromised batch. Architecturally indistinguishable from the reference model.</div>
+                </div>
+                <div style={{ width:20, height:1, background:"#333" }}/>
+                <div>
+                  <div style={{ fontSize:10, fontFamily:"monospace", color:"#fff", fontWeight:700, letterSpacing:".1em", marginBottom:4 }}>TIER-2 (90-97%)</div>
+                  <div style={{ fontSize:12, fontFamily:"Helvetica", color:"#bbb", lineHeight:1.4 }}>High precision. Minor deviances in internal tags or concealed stitching.</div>
+                </div>
+                <div style={{ width:20, height:1, background:"#333" }}/>
+                <div>
+                  <div style={{ fontSize:10, fontFamily:"monospace", color:"#fff", fontWeight:700, letterSpacing:".1em", marginBottom:4 }}>TIER-3 (&lt;90%)</div>
+                  <div style={{ fontSize:12, fontFamily:"Helvetica", color:"#bbb", lineHeight:1.4 }}>Aesthetic match. Recognizable silhouette but structural deviations are present.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

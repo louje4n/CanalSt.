@@ -20,7 +20,7 @@ export interface Listing {
   txt: string;
   accent: string;
   sil: 'jacket' | 'puffer' | 'blazer' | 'trouser' | 'cargo' | 'draped';
-  auth: boolean;
+  matchScore: number;
   watchers: number;
   hot: boolean;
   type: string;

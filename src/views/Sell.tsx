@@ -1,6 +1,6 @@
 import { D, B, M } from '../styles/theme';
 
-const RESULT = [["Brand Detected","Helmut Lang"],["Category","Trousers / Cargo"],["Condition","Very Good"],["Suggested Price","$380 – $520"],["Aesthetic Signature","Deconstruct"],["Est. Market Demand","Medium-High"],["Confidence","94.2%"]];
+const RESULT = [["Brand Detected","Helmut Lang"],["Category","Trousers / Cargo"],["Condition","Very Good"],["Est. Market Value","$380 – $520"],["Aesthetic Signature","Deconstruct"],["Visual Proximity","94%"],["Confidence","High"]];
 
 export const Sell = ({ sellStep, setSellStep }: { sellStep: number, setSellStep: (n: number | ((prev: number) => number)) => void }) => {
   const analyze = () => { setSellStep(1); setTimeout(() => setSellStep(2), 3400); };
@@ -55,9 +55,9 @@ export const Sell = ({ sellStep, setSellStep }: { sellStep: number, setSellStep:
           </div>
         ))}
         <div style={{ ...M, fontSize:8, color:"#bbb", letterSpacing:".06em", padding:"10px 0 18px" }}>All fields are editable prior to publishing.</div>
-        <button className="btn-p">SUBMIT FOR AUTHENTICATION →</button>
+        <button className="btn-p">SUBMIT FOR INDEXING →</button>
         <button className="btn-s" style={{ marginTop:10 }} onClick={() => setSellStep(0)}>RE-ANALYZE</button>
-        <div style={{ ...M, fontSize:7, color:"#ccc", letterSpacing:".1em", textAlign:"center", marginTop:14 }}>AUTHENTICATION TAKES 24–48 HOURS BEFORE LISTING GOES LIVE</div>
+        <div style={{ ...M, fontSize:7, color:"#ccc", letterSpacing:".1em", textAlign:"center", marginTop:14 }}>INDEXING TAKES 2–4 HOURS BEFORE LISTING GOES LIVE</div>
       </>}
     </div>
   );

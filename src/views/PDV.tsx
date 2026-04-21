@@ -1,5 +1,5 @@
 import { D, B, M, sigColor } from '../styles/theme';
-import { AuthBadge } from '../components/ui/AuthBadge';
+import { DupeBadge } from '../components/ui/DupeBadge';
 import { MarketSignals } from '../components/ui/MarketSignals';
 import { StudioPlate } from '../components/branding/StudioPlate';
 import { useStore } from '../store/useStore';
@@ -38,7 +38,7 @@ export const PDV = ({ pdvPhoto, setPdvPhoto, LISTINGS }: { pdvPhoto: number, set
         </div>
         <div style={{ ...D, fontSize:28, letterSpacing:".02em", lineHeight:1.1, color:"#111", marginBottom:12 }}>{l.item.toUpperCase()}</div>
 
-        <div style={{ marginBottom:18 }}><AuthBadge/></div>
+        <div style={{ marginBottom:18 }}><DupeBadge matchScore={l.matchScore} dark={l.txt==="#fff"}/></div>
 
         <div style={{ paddingBottom:18, borderBottom:"1px solid #f0f0f0", marginBottom:20 }}>
           <div style={{ display:"flex", gap:10, alignItems:"baseline", marginBottom:10, flexWrap:"wrap" }}>
@@ -107,7 +107,7 @@ export const PDV = ({ pdvPhoto, setPdvPhoto, LISTINGS }: { pdvPhoto: number, set
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           SECURE CHECKOUT · ${l.price.toLocaleString()}
         </button>
-        <div style={{ ...M, fontSize:7, color:"#ccc", letterSpacing:".1em", textAlign:"center", marginTop:14, marginBottom:26 }}>BUYER PROTECTION · ENCRYPTED · AUTHENTICATED</div>
+        <div style={{ ...M, fontSize:7, color:"#ccc", letterSpacing:".1em", textAlign:"center", marginTop:14, marginBottom:26 }}>BUYER PROTECTION · ENCRYPTED · VERIFIED INDEX</div>
 
         <div style={{ margin:"0 -20px" }}>
           <div style={{ padding:"0 20px 12px", display:"flex", justifyContent:"space-between", alignItems:"baseline", borderTop:"1px solid #f0f0f0", paddingTop:22 }}>

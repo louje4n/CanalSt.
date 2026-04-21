@@ -1,5 +1,5 @@
 import { D, B, M } from '../styles/theme';
-import { AuthBadge } from '../components/ui/AuthBadge';
+import { DupeBadge } from '../components/ui/DupeBadge';
 import { MarketSignals } from '../components/ui/MarketSignals';
 import { StudioPlate } from '../components/branding/StudioPlate';
 import { useStore } from '../store/useStore';
@@ -19,7 +19,7 @@ export const Archive = ({ HERO, ROTATION, GRID }: { HERO: Listing, ROTATION: Lis
       </div>
       <div style={{ display:"flex", justifyContent:"space-between", marginTop:10 }}>
         <span style={{ ...M, fontSize:9, color:"#aaa", letterSpacing:".1em" }}>ISSUE 047 / APR 2026</span>
-        <span style={{ ...M, fontSize:9, color:"#aaa", letterSpacing:".08em" }}>ALL AUTHENTICATED ✓</span>
+        <span style={{ ...M, fontSize:9, color:"#aaa", letterSpacing:".08em" }}>VERIFIED INDEX ✓</span>
       </div>
     </div>
 
@@ -34,7 +34,7 @@ export const Archive = ({ HERO, ROTATION, GRID }: { HERO: Listing, ROTATION: Lis
       <div style={{ height:380, background:HERO.bg, position:"relative", overflow:"hidden" }}>
         <StudioPlate l={HERO} size="hero"/>
         <div style={{ position:"absolute", top:16, left:16 }}>
-          <AuthBadge dark/>
+          <DupeBadge matchScore={HERO.matchScore} dark/>
         </div>
         <div style={{ position:"absolute", top:16, right:16 }}>
           <span style={{ ...M, fontSize:9, color:HERO.txt, opacity:.55, letterSpacing:".08em" }}>{HERO.year}</span>
@@ -65,7 +65,7 @@ export const Archive = ({ HERO, ROTATION, GRID }: { HERO: Listing, ROTATION: Lis
             <span style={{ ...M, fontSize:9, color:l.txt, opacity:.45, letterSpacing:".06em" }}>{l.year}</span>
           </div>
           <div style={{ position:"absolute", bottom:14, left:14 }}>
-            <AuthBadge dark={l.txt === "#fff"} small/>
+            <DupeBadge matchScore={l.matchScore} dark={l.txt === "#fff"} small/>
           </div>
         </div>
         <div style={{ padding:"15px 20px 18px", background:"#fff" }}>
