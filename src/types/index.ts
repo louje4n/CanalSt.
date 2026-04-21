@@ -24,4 +24,16 @@ export interface Listing {
   watchers: number;
   hot: boolean;
   type: string;
+  batchSupplier?: string;
+  seller_id?: string;
+}
+
+export interface Profile {
+  id: string;
+  username: string;
+  bio?: string;
+  avatar_initials?: string;
+  rating: number;
+  sales: number;
+  created_at: string;
 }

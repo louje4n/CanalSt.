@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Listing } from '../types';
+import { Listing, Profile } from '../types';
 import { supabase } from '../lib/supabase';
 
 interface ActiveFilters {
@@ -21,6 +21,12 @@ interface StoreState {
   listings: Listing[];
   isLoading: boolean;
   fetchListings: () => Promise<void>;
+  session: any | null;
+  profile: Profile | null;
+  authView: 'login' | 'verify' | 'forgot' | 'reset';
+  setAuthView: (v: 'login' | 'verify' | 'forgot' | 'reset') => void;
+  setSession: (session: any | null) => void;
+  setProfile: (profile: Profile | null) => void;
 }
 
 export const useStore = create<StoreState>((set) => ({
@@ -34,6 +40,12 @@ export const useStore = create<StoreState>((set) => ({
   setActiveProduct: (product) => set({ activeProduct: product }),
   showIndexInfo: false,
   setShowIndexInfo: (v) => set({ showIndexInfo: v }),
+  session: null,
+  profile: null,
+  authView: 'login',
+  setAuthView: (v) => set({ authView: v }),
+  setSession: (session) => set({ session }),
+  setProfile: (profile) => set({ profile }),
   listings: [],
   isLoading: true,
   fetchListings: async () => {

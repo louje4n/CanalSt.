@@ -7,17 +7,41 @@ import { Sell } from './views/Sell';
 import { Profile } from './views/Profile';
 import { PDV } from './views/PDV';
 import { useStore } from './store/useStore';
+import { supabase } from './lib/supabase';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 
 export default function App() {
-  const { activeProduct, setActiveProduct, showIndexInfo, setShowIndexInfo, fetchListings, isLoading } = useStore();
+  const { activeProduct, setActiveProduct, showIndexInfo, setShowIndexInfo, fetchListings, isLoading, setSession, setProfile } = useStore();
   const [pdvPhoto, setPdvPhoto] = useState(0);
-  const [sellStep, setSellStep] = useState(0);
+
   const location = useLocation();
 
   useEffect(() => {
     fetchListings();
-  }, [fetchListings]);
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) fetchProfile(session.user.id);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      
+      if (event === 'PASSWORD_RECOVERY') {
+        useStore.getState().setAuthView('reset');
+      }
+
+      if (session) fetchProfile(session.user.id);
+      else setProfile(null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [fetchListings, setSession, setProfile]);
+
+  const fetchProfile = async (id: string) => {
+    const { data } = await supabase.from('profiles').select('*').eq('id', id).single();
+    if (data) setProfile(data);
+  };
 
   if (isLoading) {
     return (
@@ -54,7 +78,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Archive />} />
             <Route path="/curator" element={<Curator />} />
-            <Route path="/sell" element={<Sell sellStep={sellStep} setSellStep={setSellStep} />} />
+            <Route path="/sell" element={<Sell />} />
             <Route path="/profile" element={<Profile />} />
           </Routes>
         </div>
@@ -69,7 +93,7 @@ export default function App() {
           {NAV.map(({ key, path, label, svg }) => {
             const active = location.pathname === path && !activeProduct;
             return (
-              <Link key={key} to={path} onClick={() => { setActiveProduct(null); setSellStep(0); }}
+              <Link key={key} to={path} onClick={() => { setActiveProduct(null); }}
                 style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:4, background:"none", border:"none", cursor:"pointer", padding:0, color: active ? "#111" : "#ccc", transition:"color .2s", position:"relative", textDecoration:"none" }}>
                 {svg}
                 <span style={{ ...M, fontSize:7, letterSpacing:".1em" }}>{label}</span>
