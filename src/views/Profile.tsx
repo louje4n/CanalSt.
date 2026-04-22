@@ -15,6 +15,8 @@ export const Profile = () => {
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [initials, setInitials] = useState('');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   const handleAuth = async (type: 'in' | 'up') => {
     if (!email || !password) {
@@ -55,19 +57,32 @@ export const Profile = () => {
   const handleUpdate = async () => {
     setLoading(true);
     const resolvedUsername = username || profile?.username || session?.user?.email?.split('@')[0];
+    let avatar_url = profile?.avatar_url;
+
+    if (avatarFile) {
+      const ext = avatarFile.name.split('.').pop();
+      const path = `${session?.user?.id}/avatar.${ext}`;
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, avatarFile, { upsert: true });
+      if (!upErr) {
+        const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+        avatar_url = data.publicUrl;
+      }
+    }
+
     const updates = { 
         id: session?.user?.id, 
         username: resolvedUsername, 
         bio, 
-        avatar_initials: initials 
+        avatar_initials: initials,
+        avatar_url,
     };
     
-    // Upsert gracefully handles INSERT or UPDATE
     const { error } = await supabase.from('profiles').upsert(updates);
     if (!error) {
-      // Re-map the state natively
       setProfile({ ...(profile || {}), ...updates } as any);
       setEditMode(false);
+      setAvatarFile(null);
+      setAvatarPreview(null);
     } else {
       if (error.code === '23505') {
         alert(`The username "${resolvedUsername}" is already taken. Please enter a different one.`);
@@ -146,8 +161,11 @@ export const Profile = () => {
 
       {!editMode ? (
         <div style={{ display:"flex", gap:16, alignItems:"center", paddingBottom:22, borderBottom:"1px solid #f0f0f0", marginBottom:22 }}>
-          <div style={{ width:60, height:60, background:"#111", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-            <span style={{ ...D, fontSize:18, color:"#fff", letterSpacing:".05em" }}>{profile?.avatar_initials || "AC"}</span>
+          <div style={{ width:60, height:60, background:"#111", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, overflow:"hidden" }}>
+            {profile?.avatar_url
+              ? <img src={profile.avatar_url} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+              : <span style={{ ...D, fontSize:18, color:"#fff", letterSpacing:".05em" }}>{profile?.avatar_initials || "AC"}</span>
+            }
           </div>
           <div style={{ flex:1 }}>
             <div style={{ display:"flex", justifyContent:"space-between" }}>
@@ -164,6 +182,24 @@ export const Profile = () => {
         </div>
       ) : (
         <div style={{ paddingBottom:22, borderBottom:"1px solid #f0f0f0", marginBottom:22 }}>
+          <label style={{ ...B, display:"block", fontSize:10, marginBottom:4, color:"#111" }}>PROFILE PICTURE</label>
+          <div
+            style={{ width:"100%", border:"1px dashed #ccc", padding:"14px", marginBottom:12, cursor:"pointer", display:"flex", alignItems:"center", gap:12 }}
+            onClick={() => document.getElementById('avatar-upload')?.click()}
+          >
+            {avatarPreview
+              ? <img src={avatarPreview} style={{ width:44, height:44, objectFit:"cover" }} />
+              : <div style={{ width:44, height:44, background:"#111", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <span style={{ ...D, fontSize:14, color:"#fff" }}>{initials || "AC"}</span>
+                </div>
+            }
+            <span style={{ ...M, fontSize:9, color:"#888", letterSpacing:".1em" }}>{avatarFile ? avatarFile.name.toUpperCase() : 'TAP TO UPLOAD PHOTO'}</span>
+          </div>
+          <input id="avatar-upload" type="file" accept="image/*" style={{ display:"none" }} onChange={e => {
+            const f = e.target.files?.[0];
+            if (f) { setAvatarFile(f); setAvatarPreview(URL.createObjectURL(f)); }
+          }} />
+
           <label style={{ ...B, display:"block", fontSize:10, marginBottom:4, color:"#111" }}>USERNAME</label>
           <input style={{ width:"100%", padding:"10px 12px", border:"1px solid #111", background:"#fff", ...M, fontSize:11, marginBottom:12 }} value={username} onChange={e=>setUsername(e.target.value)} />
 

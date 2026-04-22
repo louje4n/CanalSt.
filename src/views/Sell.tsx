@@ -9,6 +9,7 @@ export const Sell = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState('');
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState({
     brand: '', item: '', price: '', size: '', fit: '', condition: '', lineage: '', batchSupplier: ''
   });
@@ -50,6 +51,18 @@ export const Sell = () => {
 
   const handleList = async () => {
     setLoading(true);
+
+    // Upload all images and collect public URLs
+    const imageUrls: string[] = [];
+    for (const file of imageFiles) {
+      const ext = file.name.split('.').pop();
+      const path = `${session!.user.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('listing-images').upload(path, file);
+      if (!upErr) {
+        const { data } = supabase.storage.from('listing-images').getPublicUrl(path);
+        imageUrls.push(data.publicUrl);
+      }
+    }
     const typeMap: Record<string, string> = {
       'Jackets & Coats': 'jacket', 'Blazers': 'blazer', 'Hoodies & Sweats': 'hoodie',
       'Knitwear': 'knitwear', 'Shirts': 'shirt', 'T-Shirts': 'tshirt', 'Polos': 'polo',
@@ -78,6 +91,7 @@ export const Sell = () => {
       matchScore: 92,
       auth: false,
       seller: session.user.email?.split('@')[0].toUpperCase(),
+      images: imageUrls,
       type: typeMap[category] || 'other',
       sil: silMap[category] || 'other',
       bg: '#f5f5f5', txt: '#111', accent: '#ddd'
@@ -106,17 +120,44 @@ export const Sell = () => {
       <div style={{ ...D, fontSize:28, letterSpacing:".03em", color:"#111", marginBottom:4 }}>LIST AN ITEM</div>
       <div style={{ ...M, fontSize:9, color:"#aaa", letterSpacing:".1em", marginBottom:24 }}>MANUAL INDEX ENTRY</div>
 
-      <div style={{ ...M, fontSize:8, letterSpacing:".12em", color:"#aaa", marginBottom:9 }}>PHOTOGRAPHS · REQUIRED</div>
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr", gap:6, marginBottom:24 }}>
-        {[0,1,2,3].map(i => {
-          const primary = i === 0;
-          return (
-            <div key={i} style={{ aspectRatio:"1/1.2", border: primary ? "1px solid #111" : "1px dashed #d4d4d4", display:"flex", alignItems:"center", justifyContent:"center", background: "transparent", position:"relative", cursor: "pointer" }}>
-              <span style={{ ...M, fontSize:16, color:"#d0d0d0" }}>+</span>
-              {primary && <span style={{ position:"absolute", bottom:3, ...M, fontSize:6, color:"#111", letterSpacing:".12em", fontWeight:700 }}>PRIMARY</span>}
+      <div style={{ ...M, fontSize:8, letterSpacing:".12em", color:"#aaa", marginBottom:9 }}>PHOTOGRAPHS · MAX 9</div>
+      <input
+        id="img-upload"
+        type="file"
+        accept="image/*"
+        multiple
+        style={{ display:"none" }}
+        onChange={e => {
+          const incoming = Array.from(e.target.files || []);
+          setImageFiles(prev => {
+            const combined = [...prev, ...incoming];
+            return combined.slice(0, 9);
+          });
+          e.target.value = '';
+        }}
+      />
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:6, marginBottom:24 }}>
+        {imageFiles.map((f, i) => (
+          <div key={i} style={{ aspectRatio:"1/1", position:"relative", overflow:"hidden", border:"1px solid #ddd" }}>
+            <img src={URL.createObjectURL(f)} style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
+            <div
+              onClick={() => setImageFiles(prev => prev.filter((_, j) => j !== i))}
+              style={{ position:"absolute", top:4, right:4, width:18, height:18, background:"rgba(0,0,0,.65)", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer" }}
+            >
+              <span style={{ color:"#fff", fontSize:10, lineHeight:1 }}>✕</span>
             </div>
-          );
-        })}
+            {i === 0 && <span style={{ position:"absolute", bottom:3, left:3, ...M, fontSize:6, color:"#fff", background:"#111", padding:"2px 5px", letterSpacing:".1em" }}>PRIMARY</span>}
+          </div>
+        ))}
+        {imageFiles.length < 9 && (
+          <div
+            onClick={() => document.getElementById('img-upload')?.click()}
+            style={{ aspectRatio:"1/1", border:"1px dashed #ccc", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", cursor:"pointer", gap:4 }}
+          >
+            <span style={{ ...M, fontSize:20, color:"#ccc" }}>+</span>
+            <span style={{ ...M, fontSize:7, color:"#bbb", letterSpacing:".08em" }}>{imageFiles.length}/9</span>
+          </div>
+        )}
       </div>
 
       <Input label="BRAND" field="brand" />

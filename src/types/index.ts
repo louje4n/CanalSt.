@@ -26,6 +26,7 @@ export interface Listing {
   type: string;
   batchSupplier?: string;
   seller_id?: string;
+  images?: string[];
 }
 
 export interface Profile {
@@ -33,6 +34,7 @@ export interface Profile {
   username: string;
   bio?: string;
   avatar_initials?: string;
+  avatar_url?: string;
   rating: number;
   sales: number;
   created_at: string;
