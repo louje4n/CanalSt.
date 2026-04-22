@@ -67,7 +67,7 @@ export const PDV = ({ pdvPhoto, setPdvPhoto }: { pdvPhoto: number, setPdvPhoto: 
         </div>
 
         <div style={{ ...M, fontSize:8, letterSpacing:".13em", color:"#aaa", marginBottom:14 }}>TECHNICAL SPECIFICATIONS</div>
-        {[["Material",l.material],["Fit",l.fit],["Lineage",l.lineage],["Season",l.year],["Condition Score",`${l.condScore} / 10`]].map(([k,v]) => (
+        {[["Material",l.material],["Fit",l.fit],["Lineage",l.lineage],["Condition Score",`${l.condScore} / 10`]].map(([k,v]) => (
           <div key={k} style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", paddingBottom:11, marginBottom:11, borderBottom:"1px solid #f5f5f5" }}>
             <span style={{ ...M, fontSize:9, color:"#c0c0c0", letterSpacing:".05em" }}>{k}</span>
             <span style={{ ...B, fontSize:12, fontWeight:500, color:"#111", textAlign:"right", maxWidth:"55%" }}>{v}</span>

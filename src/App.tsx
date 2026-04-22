@@ -6,6 +6,13 @@ import { Curator } from './views/Curator';
 import { Sell } from './views/Sell';
 import { Profile } from './views/Profile';
 import { PDV } from './views/PDV';
+import { Messages } from './views/Messages';
+import { SavedSearches } from './views/SavedSearches';
+import { Preferences } from './views/Preferences';
+import { Identity } from './views/Identity';
+import { History } from './views/History';
+import { Shipping } from './views/Shipping';
+import { Settings } from './views/Settings';
 import { useStore } from './store/useStore';
 import { supabase } from './lib/supabase';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
@@ -80,6 +87,13 @@ export default function App() {
             <Route path="/curator" element={<Curator />} />
             <Route path="/sell" element={<Sell />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/messages" element={<Messages />} />
+            <Route path="/profile/searches" element={<SavedSearches />} />
+            <Route path="/profile/preferences" element={<Preferences />} />
+            <Route path="/profile/identity" element={<Identity />} />
+            <Route path="/profile/history" element={<History />} />
+            <Route path="/profile/shipping" element={<Shipping />} />
+            <Route path="/profile/settings" element={<Settings />} />
           </Routes>
         </div>
 

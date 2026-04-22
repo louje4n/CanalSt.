@@ -8,9 +8,35 @@ export const Sell = () => {
   const { session } = useStore();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState('');
   const [formData, setFormData] = useState({
-    brand: '', item: '', price: '', size: '', condition: '', lineage: '', batchSupplier: ''
+    brand: '', item: '', price: '', size: '', fit: '', condition: '', lineage: '', batchSupplier: ''
   });
+
+  const CATEGORY_FITS: Record<string, string[]> = {
+    'Jackets & Coats':   ['Oversized', 'Regular', 'Slim', 'Cropped', 'Boxy', 'Relaxed'],
+    'Blazers':           ['Oversized', 'Regular', 'Slim', 'Relaxed', 'Boxy'],
+    'Hoodies & Sweats':  ['Oversized', 'Regular', 'Slim', 'Cropped', 'Boxy', 'Relaxed'],
+    'Knitwear':          ['Oversized', 'Regular', 'Slim', 'Cropped', 'Relaxed'],
+    'Shirts':            ['Oversized', 'Regular', 'Slim', 'Cropped', 'Boxy', 'Relaxed'],
+    'T-Shirts':          ['Oversized', 'Regular', 'Slim', 'Cropped', 'Boxy', 'Relaxed'],
+    'Polos':             ['Regular', 'Slim', 'Oversized', 'Relaxed'],
+    'Vests & Tanks':     ['Oversized', 'Regular', 'Slim', 'Cropped'],
+    'Jeans':             ['Straight', 'Slim', 'Skinny', 'Relaxed', 'Wide Leg', 'Bootcut', 'Tapered', 'Baggy'],
+    'Trousers':          ['Straight', 'Slim', 'Wide Leg', 'Tapered', 'Relaxed', 'Cropped', 'Regular'],
+    'Shorts':            ['Regular', 'Slim', 'Relaxed', 'Wide Leg', 'Boxy'],
+    'Cargos':            ['Straight', 'Relaxed', 'Wide Leg', 'Tapered', 'Slim', 'Baggy'],
+    'Dresses':           ['Oversized', 'Regular', 'Slim', 'A-Line', 'Relaxed'],
+    'Skirts':            ['Regular', 'A-Line', 'Slim', 'Relaxed'],
+    'Footwear':          ['True to Size', 'Runs Small', 'Runs Large'],
+    'Accessories':       ['One Size'],
+    'Bags':              ['One Size'],
+  };
+
+  const CATEGORIES = Object.keys(CATEGORY_FITS);
+  const fitOptions = category ? CATEGORY_FITS[category] || [] : [];
+
+  const selectStyle: React.CSSProperties = { width:"100%", padding:"10px 12px", border:"1px solid #ddd", background:"#f5f5f5", ...M, fontSize:11, appearance:"none" as const, cursor:"pointer" };
 
   if (!session) {
     return (
@@ -24,11 +50,27 @@ export const Sell = () => {
 
   const handleList = async () => {
     setLoading(true);
+    const typeMap: Record<string, string> = {
+      'Jackets & Coats': 'jacket', 'Blazers': 'blazer', 'Hoodies & Sweats': 'hoodie',
+      'Knitwear': 'knitwear', 'Shirts': 'shirt', 'T-Shirts': 'tshirt', 'Polos': 'polo',
+      'Vests & Tanks': 'vest', 'Jeans': 'jeans', 'Trousers': 'trousers', 'Shorts': 'shorts',
+      'Cargos': 'cargos', 'Dresses': 'dress', 'Skirts': 'skirt', 'Footwear': 'footwear',
+      'Accessories': 'accessory', 'Bags': 'bag',
+    };
+    const silMap: Record<string, string> = {
+      'Jackets & Coats': 'jacket', 'Blazers': 'jacket', 'Hoodies & Sweats': 'hoodie',
+      'Knitwear': 'sweater', 'Shirts': 'shirt', 'T-Shirts': 'tshirt', 'Polos': 'shirt',
+      'Vests & Tanks': 'vest', 'Jeans': 'trousers', 'Trousers': 'trousers', 'Shorts': 'shorts',
+      'Cargos': 'trousers', 'Dresses': 'dress', 'Skirts': 'skirt', 'Footwear': 'shoe',
+      'Accessories': 'accessory', 'Bags': 'bag',
+    };
+
     const { error } = await supabase.from('listings').insert({
       brand: formData.brand,
       item: formData.item,
       price: Number(formData.price),
       size: formData.size,
+      fit: formData.fit,
       condition: formData.condition,
       lineage: formData.lineage,
       batch_supplier: formData.batchSupplier,
@@ -36,7 +78,9 @@ export const Sell = () => {
       matchScore: 92,
       auth: false,
       seller: session.user.email?.split('@')[0].toUpperCase(),
-      sil: 'jacket', type: 'jacket', bg: '#f5f5f5', txt: '#111', accent: '#ddd'
+      type: typeMap[category] || 'other',
+      sil: silMap[category] || 'other',
+      bg: '#f5f5f5', txt: '#111', accent: '#ddd'
     });
 
     setLoading(false);
@@ -78,7 +122,25 @@ export const Sell = () => {
       <Input label="BRAND" field="brand" />
       <Input label="ITEM NAME" field="item" />
       <Input label="PRICE (USD)" field="price" />
+
+      <div style={{ marginBottom: 14 }}>
+        <label style={{ ...B, display:"block", fontSize:10, marginBottom:4, color:"#111" }}>CATEGORY</label>
+        <select style={selectStyle} value={category} onChange={e => { setCategory(e.target.value); setFormData({...formData, fit: ''}); }}>
+          <option value="">SELECT CATEGORY</option>
+          {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+      </div>
+
       <Input label="SIZE" field="size" />
+
+      <div style={{ marginBottom: 14 }}>
+        <label style={{ ...B, display:"block", fontSize:10, marginBottom:4, color:"#111" }}>FIT</label>
+        <select style={{ ...selectStyle, opacity: category ? 1 : 0.4 }} value={formData.fit} onChange={e => setFormData({...formData, fit: e.target.value})} disabled={!category}>
+          <option value="">{category ? 'SELECT FIT' : 'SELECT CATEGORY FIRST'}</option>
+          {fitOptions.map(o => <option key={o} value={o}>{o}</option>)}
+        </select>
+      </div>
+
       <Input label="CONDITION (e.g., Pristine, Archive)" field="condition" />
       <Input label="LINEAGE / AESTHETIC" field="lineage" />
       

@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useStore } from '../store/useStore';
 import { D, B, M } from '../styles/theme';
-import { DupeBadge } from '../components/ui/DupeBadge';
+
 
 export const Profile = () => {
   const { session, profile, setProfile, authView, setAuthView } = useStore();
@@ -11,6 +12,7 @@ export const Profile = () => {
   const [loading, setLoading] = useState(false);
 
   const [editMode, setEditMode] = useState(false);
+  const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [initials, setInitials] = useState('');
 
@@ -52,9 +54,10 @@ export const Profile = () => {
 
   const handleUpdate = async () => {
     setLoading(true);
+    const resolvedUsername = username || profile?.username || session?.user?.email?.split('@')[0];
     const updates = { 
         id: session?.user?.id, 
-        username: profile?.username || session?.user?.email?.split('@')[0], 
+        username: resolvedUsername, 
         bio, 
         avatar_initials: initials 
     };
@@ -66,7 +69,11 @@ export const Profile = () => {
       setProfile({ ...(profile || {}), ...updates } as any);
       setEditMode(false);
     } else {
-      alert("Error: " + error.message);
+      if (error.code === '23505') {
+        alert(`The username "${resolvedUsername}" is already taken. Please enter a different one.`);
+      } else {
+        alert("Error: " + error.message);
+      }
     }
     setLoading(false);
   };
@@ -144,23 +151,24 @@ export const Profile = () => {
           </div>
           <div style={{ flex:1 }}>
             <div style={{ display:"flex", justifyContent:"space-between" }}>
-              <div style={{ ...M, fontSize:12, fontWeight:700, color:"#111", marginBottom:3 }}>{profile?.username || session.user.email}</div>
-              <div style={{ ...M, fontSize:9, color:"#888", cursor:"pointer", textDecoration:"underline" }} onClick={() => { setBio(profile?.bio||''); setInitials(profile?.avatar_initials||''); setEditMode(true); }}>EDIT</div>
+              <div style={{ ...M, fontSize:12, fontWeight:700, color:"#111", marginBottom:3 }}>{profile?.username || session.user.email?.split('@')[0]}</div>
+              <div style={{ ...M, fontSize:9, color:"#888", cursor:"pointer", textDecoration:"underline" }} onClick={() => { setUsername(profile?.username || session.user.email?.split('@')[0] || ''); setBio(profile?.bio||''); setInitials(profile?.avatar_initials||''); setEditMode(true); }}>EDIT</div>
             </div>
             <div style={{ ...B, fontSize:12, color:"#888", marginBottom:6 }}>{profile?.bio || "Member since 2023"}</div>
             <div style={{ display:"flex", gap:10, alignItems:"center" }}>
               <span style={{ ...M, fontSize:9, color:"#555" }}>★ {profile?.rating || "5.0"}</span>
               <span style={{ color:"#e0e0e0" }}>·</span>
               <span style={{ ...M, fontSize:9, color:"#555" }}>{profile?.sales || 0} SALES</span>
-              <span style={{ color:"#e0e0e0" }}>·</span>
-              <DupeBadge matchScore={98} small/>
             </div>
           </div>
         </div>
       ) : (
         <div style={{ paddingBottom:22, borderBottom:"1px solid #f0f0f0", marginBottom:22 }}>
+          <label style={{ ...B, display:"block", fontSize:10, marginBottom:4, color:"#111" }}>USERNAME</label>
+          <input style={{ width:"100%", padding:"10px 12px", border:"1px solid #111", background:"#fff", ...M, fontSize:11, marginBottom:12 }} value={username} onChange={e=>setUsername(e.target.value)} />
+
           <label style={{ ...B, display:"block", fontSize:10, marginBottom:4, color:"#111" }}>INITIALS</label>
-          <input style={{ width:"100%", padding:"10px 12px", border:"1px solid #111", background:"#fff", ...M, fontSize:11, marginBottom:12 }} maxLength={3} value={initials} onChange={e=>setInitials(e.target.value)} />
+          <input style={{ width:"100%", padding:"10px 12px", border:"1px solid #111", background:"#fff", ...M, fontSize:11, marginBottom:12 }} maxLength={2} value={initials} onChange={e=>setInitials(e.target.value)} />
           
           <label style={{ ...B, display:"block", fontSize:10, marginBottom:4, color:"#111" }}>BIO</label>
           <input style={{ width:"100%", padding:"10px 12px", border:"1px solid #111", background:"#fff", ...M, fontSize:11, marginBottom:16 }} value={bio} onChange={e=>setBio(e.target.value)} />
@@ -178,11 +186,20 @@ export const Profile = () => {
           </div>
         ))}
       </div>
-      {["Messages","Saved Searches","Aesthetic Preferences","Verified Identity","Transaction History","Shipping & Payment","Settings"].map(item => (
-        <div key={item} className="menu-row">
-          <span style={{ ...B, fontSize:13, fontWeight:500, color:"#111" }}>{item}</span>
+
+      {[
+        { name: "Messages", path: "/profile/messages" },
+        { name: "Saved Searches", path: "/profile/searches" },
+        { name: "Aesthetic Preferences", path: "/profile/preferences" },
+        { name: "Verified Identity", path: "/profile/identity" },
+        { name: "Transaction History", path: "/profile/history" },
+        { name: "Shipping & Payment", path: "/profile/shipping" },
+        { name: "Settings", path: "/profile/settings" }
+      ].map(item => (
+        <Link key={item.name} to={item.path} className="menu-row" style={{ textDecoration: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ ...B, fontSize:13, fontWeight:500, color:"#111" }}>{item.name}</span>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5"><path d="m9 18 6-6-6-6"/></svg>
-        </div>
+        </Link>
       ))}
     </div>
   );
